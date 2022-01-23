@@ -1,0 +1,20 @@
+{
+  "name": "Hooked-on-book",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PurviMec/Hooked-on-book.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PurviMec/Hooked-on-book/issues"
+  },
+  "homepage": "https://github.com/PurviMec/Hooked-on-book#readme"
+}
