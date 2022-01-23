@@ -17,25 +17,50 @@ db.once("open", async () => {
 
     userData.push({ username, email, password });
   }
+  const createdUsers = await User.collection.insertMany(userData);
 
-  // let createdBooks = [];
+   let createdBooks = [];
 
-  //     for (let i = 0; i < 100; i += 1) {
-  //     const bookTitles = faker.lorem.words(Math.round(Math.random() * 20) + 1);
+      for (let i = 0; i < 100; i += 1) {
+      const titles = faker.lorem.words(Math.round(Math.random() * 20) + 1);
+      const description = faker.lorem.words(Math.round(Math.random() * 40) + 1);
+      const author = faker.lorem.words(Math.round(Math.random() * 15) + 1);
 
-  //     const randomUserIndex = Math.floor(Math.random() * createdUsers.ops.length);
-  //     const { username, _id: userId } = createdUsers.ops[randomUserIndex];
+      const randomUserIndex = Math.floor(Math.random() * createdUsers.ops.length);
+      const { username, _id: userId } = createdUsers.ops[randomUserIndex];
 
-  //     const createdBooks = await Book.create({ bookTitles, username });
+      const createdBook = await Book.create({ titles, description, author, username });
 
-  //     const updatedUser = await User.updateOne(
-  //       { _id: userId },
-  //       { $push: { createdBooks: createdThought._id } }
-  //     );
+      const updatedUser = await User.updateOne(
+        { _id: userId },
+        { $push: { booklist : createdBook._id } }
+      );
 
-  //     createdThoughts.push(createdBooks);
-  //   }
+      createdBooks.push(createdBook);
+    }
+    
+    //create reactions
+    for (let i = 0; i < 100; i += 1) {
+      const reactionBody = faker.lorem.words(Math.round(Math.random() * 20) + 1);
+  
+      const randomUserIndex = Math.floor(Math.random() * createdUsers.ops.length);
+      const { username } = createdUsers.ops[randomUserIndex];
+  
+      const randomBookIndex = Math.floor(Math.random() * createdBooks.length);
+      const { _id: bookId } = createdBooks[randomBookIndex];
+  
+      await Book.updateOne(
+        { _id: bookId },
+        { $push: { reactions: { reactionBody, username } } },
+        { runValidators: true }
+      );
+    }
+  
+    console.log('all done!');
+    process.exit(0);
 });
+
+
 
 
 
