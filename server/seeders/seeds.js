@@ -1,7 +1,7 @@
-const faker = require(“faker”);
-const db = require(“../config/connection”);
-const { User, Book } = require(“../models”);
-db.once(“open”, async () => {
+const faker = require("faker");
+const db = require("../config/connection");
+const { User, Book } = require("../models");
+db.once("open", async () => {
   await Book.deleteMany({});
   await User.deleteMany({});
   // create user data
@@ -55,6 +55,6 @@ db.once(“open”, async () => {
         { runValidators: true }
       );
     }
-    console.log(‘all done!’);
+    console.log("all done!");
     process.exit(0);
 });
