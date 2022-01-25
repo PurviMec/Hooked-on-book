@@ -1,11 +1,11 @@
-const { Schema,model } = require('mongoose');
+const { Schema } = require('mongoose');
 
 const reviewSchema = new Schema(
   {
-    detail: {
+    reviewText: {
       type: String,
       required: true,
-      maxlength: 200
+      maxlength: 280
     },
     username: {
       type: String,
@@ -14,15 +14,13 @@ const reviewSchema = new Schema(
     createdAt: {
       type: Date,
       default: Date.now,
-    //   get: timestamp => dateFormat(timestamp)
     }
   },
-//   {
-//     toJSON: {
-//       getters: true
-//     }
-//   }
+  {
+    toJSON: {
+      getters: true
+    }
+  }
 );
-const Review = model('Review', reviewSchema);
 
-module.exports = Review;
+module.exports = reviewSchema;

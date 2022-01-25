@@ -20,12 +20,16 @@ const userSchema = new Schema(
       required: true,
       minlength: 5
     },
-    booklist: [
+    borrowList: [
       {
         type: Schema.Types.ObjectId,
         ref: 'Book'
       }
     ],
+    favouriteList:[{
+      type: Schema.Types.ObjectId,
+      ref:'Book'
+    }]
   },
   {
     toJSON: {

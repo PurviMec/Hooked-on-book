@@ -1,4 +1,5 @@
 const { Schema, model } = require('mongoose');
+const reviewSchema = require('./Review');
 
 
 const bookSchema = new Schema(
@@ -21,21 +22,24 @@ const bookSchema = new Schema(
         default:undefined,
         //get: timestamp => dateFormat(timestamp)
     },
-    reviews:[
-        {
-            type:Schema.Types.ObjectId,
-            ref:'Reveiw',
-        }
 
-    ]
-  },
-  {
-    toJSON: {
-      getters: true
-    }
+    //one
+    genere:{
+      type: Schema.Types.ObjectId,
+      ref:'Genere',
+      required:true
+
+    },
+//list of
+reviews: [reviewSchema]
+},
+{
+  toJSON: {
+    getters: true
   }
+}
 );
 
-const Book = model('Book', bookSchema);
+const Book = mongoose.model('Book', bookSchema);
 
 module.exports = Book;
