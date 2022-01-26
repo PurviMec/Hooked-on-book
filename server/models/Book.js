@@ -17,6 +17,10 @@ const bookSchema = new Schema(
         type:String,
         require:true,
     },
+    price: {
+      type: Number,
+      require: true,
+    },
     publish:{
         type:Date,
         default:undefined,
