@@ -1,7 +1,6 @@
 const {Book, User} = require('../models')
 const { signToken } = require("../utils/auth");
 const { AuthenticationError } = require("apollo-server-express");
-const { aggregate } = require('../models/User');
 const resolvers = {
   Query: {
     me: async (parent, args, context) => {
