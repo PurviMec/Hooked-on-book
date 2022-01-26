@@ -1,6 +1,7 @@
 const {Book, User} = require('../models')
 const { signToken } = require("../utils/auth");
 const { AuthenticationError } = require("apollo-server-express");
+const { aggregate } = require('../models/User');
 const resolvers = {
   Query: {
     me: async (parent, args, context) => {
@@ -12,6 +13,19 @@ const resolvers = {
         return user;
       }
       throw new AuthenticationError("Not logged in");
+    },
+
+    books: async () => {
+      return Book.find()
+        .select('-__v -password')
+        .populate('borrowList')
+        .populate('favouriteList');
+    },
+    book: async (parent,args, context, ) => {
+      return User.findOne({ _id: context.book._id })
+        .select('-__v -password')
+        .populate('borrowList')
+        .populate('favouriteList');
     },
   },
 
@@ -44,6 +58,23 @@ const resolvers = {
       catch (err) {
         console.log(err);
       }
+    },
+
+    addBook: async (parent, args, context) => {
+      const books = async () => {
+        return Book.find()
+          .select('-__v -password')
+          .populate('borrowList')
+          .populate('favouriteList');
+      }
+      if (context.user) {
+        return Book.create({ title: args.title, description: args.description, author: args.author, publish: args.publish, genere: args.genere})
+      }
+      return books;
+    },
+
+    addReview: async (parent, args, context) => {
+       User.create ({ reviewText: args.reviewText, username: args.username })
     },
 
     //favouriteList(input:favouriteList!):User
