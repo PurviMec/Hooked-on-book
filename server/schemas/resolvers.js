@@ -1,30 +1,100 @@
 const {Book, User} = require('../models')
+const { signToken } = require("../utils/auth");
+const { AuthenticationError } = require("apollo-server-express");
 const resolvers = {
-    Query: {
-      users: async () => {
-        return User.find()
-          .select('-__v -password')
-          .populate('books')
-          .populate('reviews');
-      },
-      user: async (parent, { username }) => {
-        return User.findOne({ username })
-          .select('-__v -password')
-          .populate('books')
-          .populate('reviews');
-      },
-      books: async (parent, { username }) => {
-        const params = username ? { username } : {};
-        return Book.find(params).sort({ createdAt: -1 });
-      },
-      book: async (parent, { _id }) => {
-        return Book.findOne({ _id });
-      }
-  
-    }
-   
+  Query: {
+    me: async (parent, args, context) => {
+      if (context.user) {
+        const user = await User.findOne({})// _id: context.user._id
+          .select("-__v -password")
+          .populate("books");
 
-  };
+        return user;
+      }
+      throw new AuthenticationError("Not logged in");
+    },
+  },
+
+  Mutation: {
+    //login(username: String!, Password: String) :Auth
+    login: async (parent, { email, password }) => {
+      const user = await User.findOne({ email });
+
+      if (!user) {
+        throw new AuthenticationError("Incorrect credentials");
+      }
+
+      const correctPw = await user.isCorrectPassword(password);
+
+      if (!correctPw) {
+        throw new AuthenticationError("Incorrect credentials");
+      }
+
+      const token = signToken(user);
+      return { token, user };
+    },
+    //addUser(username: String!, email: String!, password: String!) :Auth
+    addUser: async (parent, args) => {
+      try {
+        const user = await User.create(args);
+
+        const token = signToken(user);
+        return { token, user };
+      } 
+      catch (err) {
+        console.log(err);
+      }
+    },
+
+    //favouriteList(input:favouriteList!):User
+    favouriteList: async (parent, args, context) => {
+      if (context.user) {
+        const updatedUser = await User.findByIdAndUpdate(
+          { id: context.user._id },
+          // take the input type to replace "body" as the arguement
+          { $addToSet: { favouriteLists: args.input } },
+          { new: true, runValidators: true }
+        );
+
+        return updatedUser;
+      }
+
+      throw new AuthenticationError("You need to be logged in!");
+    },
+
+    //removeFavouriteBook(bookId: ID!): User
+    removeFavouriteBook: async (parent, args, context) => {
+      if (context.user) {
+        const updatedUser = await User.findOneAndUpdate(
+          { _id: context.user._id },
+          { $pull: { favouriteLists: { bookId: args.bookId } } },
+          { new: true }
+        );
+
+        return updatedUser;
+      }
+
+      throw new AuthenticationError("You need to be logged in!");
+    },
+    
+    // borrowList(input:borrowList!):User
+    borrowList: async (parent, args, context) => {
+      if (context.user) {
+        const updatedUser = await User.findByIdAndUpdate(
+          { id: context.user._id },
+          // take the input type to replace "body" as the arguement
+          { $addToSet: { borrowLists: args.input } },
+          { new: true, runValidators: true }
+        );
+
+        return updatedUser;
+      }
+
+      throw new AuthenticationError("You need to be logged in!");
+    },
+
+  },
+};
   
   module.exports = resolvers;
   

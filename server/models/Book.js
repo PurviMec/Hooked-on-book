@@ -1,7 +1,7 @@
 const { Schema, model } = require('mongoose');
 const reviewSchema = require('./Review');
 
-
+// add price to add more function in furture
 const bookSchema = new Schema(
   {
     title: {
@@ -40,6 +40,6 @@ reviews: [reviewSchema]
 }
 );
 
-const Book = mongoose.model('Book', bookSchema);
+const Book = model('Book', bookSchema);
 
 module.exports = Book;
