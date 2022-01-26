@@ -22,6 +22,10 @@ const bookSchema = new Schema(
         default:undefined,
         //get: timestamp => dateFormat(timestamp)
     },
+    rent: {
+      type: Number,
+      require: true,
+    },
 
     //one
     genere:{
